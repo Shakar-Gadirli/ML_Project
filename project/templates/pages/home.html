@@ -10,8 +10,9 @@
                                 <button type="submit" class="btn btn-danger">SEARCH</button>
                             </form>
                     </div>
-                    {% if (result is defined) %}
-                        <!-- PUT scraping report here -->
+                    {% if (results is defined) %}
+                       <h3>Number of paragraphs: {{ results[0] }} </h3>
+					   <h3>Number of images: {{ results[1] }} </h3>
                     {% endif %}
                 </div>
             </div>
