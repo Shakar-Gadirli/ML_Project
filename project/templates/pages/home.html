@@ -1,0 +1,20 @@
+{% extends 'base.html'%} {% block title %} Home {% endblock %} {% block content %}
+    <div class="container mt-5 mb-5 px-10 ">
+        <div class="row">
+
+            <div class="col-md-6 offset-md-3 mb-2 ">
+                <div class="card">
+                    <div class="card-body">
+                            <form method="POST" action="/">
+                                <input type="search" placeholder="URL" name="url" />
+                                <button type="submit" class="btn btn-danger">SEARCH</button>
+                            </form>
+                    </div>
+                    {% if (result is defined) %}
+                        <!-- PUT scraping report here -->
+                    {% endif %}
+                </div>
+            </div>
+        </div>     
+    </div>
+{% endblock %}
