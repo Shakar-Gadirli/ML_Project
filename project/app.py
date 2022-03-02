@@ -2,6 +2,7 @@ from flask import request, Flask, render_template, redirect
 from flask_pymongo import PyMongo
 
 import requests
+import validators
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
@@ -14,14 +15,21 @@ def index():
         return render_template("/pages/home.html")
 
     elif(request.method == "POST"):
+        
         url = request.form['url']
-        res = requests.get(url)
-        res_html = res.content
-        tags_soup = BeautifulSoup(res_html, 'html.parser')
-        num_p_tags = len(tags_soup.find_all("p"))
-        num_img_tags = len(tags_soup.find_all("img"))
-        results = [num_p_tags, num_img_tags]
-        return render_template("/pages/home.html", results=results)
+		
+        if not validators.url(url):
+            error_msg = "You must provide a valid URL!"
+            return render_template("/pages/home.html", error=error_msg)
+        else:
+
+            res = requests.get(url)
+            res_html = res.content
+            tags_soup = BeautifulSoup(res_html, 'html.parser')
+            num_p_tags = len(tags_soup.find_all("p"))
+            num_img_tags = len(tags_soup.find_all("img"))
+            results = [num_p_tags, num_img_tags]
+            return render_template("/pages/home.html", results=results)
 
 
 if __name__ == "__main__":
