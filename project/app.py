@@ -2,6 +2,7 @@ import bson
 from flask import request, Flask, render_template, redirect
 from flask_pymongo import PyMongo
 
+from PIL import Image
 import os
 import requests
 import validators
@@ -13,20 +14,37 @@ from bson.errors import InvalidId
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://mlproject:mlproject@cluster0.5uzjt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = "mongodb+srv://mlproject:mlproject@cluster0.5uzjt.mongodb.net/MLPROJECT?retryWrites=true&w=majority"
 mongodb_client = PyMongo(app)
 db = mongodb_client.db
 
-'''
-def download_image(soup):
-	UPLOAD_FOLDER = "./images"
-	for image in soup.find_all("img"):
-		source =  image["src"]
-		img = Image.open(requests.get(image_url, stream = True).raw)
-		filename = secure_filename(img.filename)
-		img.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-		return path #bu image pathi goturub db-ya ataq
-'''		
+
+def download_images(soup,url):
+    size = 28, 28    
+    dir_name = url.split("//")[1].replace('.', '_').replace("/","_")
+    cwd = os.getcwd()
+    full_path = os.path.join("./static/images/",dir_name)
+    print("FULL PATH", full_path)
+
+    img_paths = []
+
+    if not os.path.exists(full_path):
+        os.mkdir(full_path)
+
+    c = 1
+    for image in soup.find_all("img"):
+        source =  image["src"]
+        if "http" in source:
+            img = Image.open(requests.get(source, stream = True).raw) #.convert("RGB")
+            img.thumbnail(size)
+            ext = str(img.format).lower()
+            filename = f"image_{c}.{ext}"
+            c = c + 1
+            img.save(os.path.join(full_path, filename))
+            img_paths.append(f"{full_path}/{filename}")
+    
+    return img_paths
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -51,9 +69,15 @@ def index():
 			
 			
 			# download paragraphs function -> will return paragraphs that will be stored on the db
+
+
 			# download image function -> will return image path
-			# 
-			# after getting returns save results to db.
+            image_paths = download_images(tags_soup,url)
+
+            # after getting returns save results to db.
+            # if url does not exist in db, write to db
+            if not db.articles.find_one({"url": url}):
+                db.articles.insert_one({"url":url,"image_paths":image_paths,"paragraphs":["p1","p2","p3"]})
 
             return render_template("/pages/home.html", results=results)
 
