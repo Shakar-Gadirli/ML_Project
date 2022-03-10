@@ -1,8 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
-
-
-
 import bson
 from flask import request, Flask, render_template, redirect
 from flask_pymongo import PyMongo
@@ -49,6 +44,7 @@ def download_images(soup,url):
             img_paths.append(f"{full_path}/{filename}")
     
     return img_paths
+
 
 def get_list_of_paragraphs(url):
     res = requests.get(url)
@@ -142,6 +138,7 @@ def index():
             # if url does not exist in db, write to db
             if not db.articles.find_one({"url": url}):
                 db.articles.insert_one({"url":url,"image_paths":image_paths,"paragraphs":r_par})
+
 
             return render_template("/pages/home.html", results=results)
 
