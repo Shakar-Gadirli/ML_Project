@@ -46,6 +46,71 @@ def download_images(soup,url):
     return img_paths
 
 
+def get_list_of_paragraphs(url):
+    res = requests.get(url)
+    res_html = res.content
+
+    tags_soup = BeautifulSoup(res_html, 'html.parser')
+    num_img_tags = len(tags_soup.find_all("img"))
+    url_content = tags_soup.get_text()
+
+    splat = url_content.split("\n")
+
+    paragraphs = []
+    word_counts = []
+    for i in splat:
+        if i not in ('',' ','\r','\n','\r\n','\n\r'):
+            paragraphs.append(i)
+            word_counts.append(len(i.split()))
+
+    return paragraphs, word_counts, num_img_tags
+
+
+def par_threshold(pars,numss):
+
+    len_numss = len(numss)
+    #print(numss)
+
+    numss.append(50)
+    pars.append('')
+    new_paragraphs = []
+
+    i = 0
+    while i < len_numss:
+        if numss[i] >= 50:
+            new_paragraphs.append(pars[i])
+            i += 1
+        else:        
+            new_num = numss[i]
+            new_p = pars[i]
+
+            while new_num < 50:
+                i += 1
+                new_num += numss[i]
+                new_p = new_p + ' ' + pars[i]
+
+            new_paragraphs.append(new_p)
+            i+=1
+
+    new_word_count = []
+    for i in new_paragraphs:
+        new_word_count.append(len(i.split()))
+
+    # print(new_word_count)
+
+    # print(len(new_word_count))
+    # print(len(new_paragraphs))
+
+    if (new_word_count[-1] < 50):
+        new_word_count[-2] = new_word_count[-2] + new_word_count[-1]
+        new_word_count.pop()
+        new_paragraphs[-2] = new_paragraphs[-2] + ' ' + new_paragraphs[-1]
+        new_paragraphs.pop()
+
+    return new_paragraphs,len(new_word_count)
+
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if(request.method == "GET"):
@@ -59,25 +124,21 @@ def index():
             error_msg = "You must provide a valid URL!"
             return render_template("/pages/home.html", error=error_msg)
         else:
-
+            pars, numss, num_img_tags = get_list_of_paragraphs(url)
+            r_par, r_num = par_threshold(pars, numss)
+            results = [r_num, num_img_tags]
+            # download image function -> will return image path
+            # to fix
             res = requests.get(url)
             res_html = res.content
             tags_soup = BeautifulSoup(res_html, 'html.parser')
-            num_p_tags = len(tags_soup.find_all("p"))
-            num_img_tags = len(tags_soup.find_all("img"))
-            results = [num_p_tags, num_img_tags]
-			
-			
-			# download paragraphs function -> will return paragraphs that will be stored on the db
-
-
-			# download image function -> will return image path
-            image_paths = download_images(tags_soup,url)
+            image_paths = download_images(tags_soup, url)
 
             # after getting returns save results to db.
             # if url does not exist in db, write to db
             if not db.articles.find_one({"url": url}):
-                db.articles.insert_one({"url":url,"image_paths":image_paths,"paragraphs":["p1","p2","p3"]})
+                db.articles.insert_one({"url":url,"image_paths":image_paths,"paragraphs":r_par})
+
 
             return render_template("/pages/home.html", results=results)
 
@@ -86,4 +147,12 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 
-# url="https://www.bbc.com/travel/article/20220228-italys-rare-surprisingly-bitter-honey"
+
+
+
+
+
+
+
+ 
+    
