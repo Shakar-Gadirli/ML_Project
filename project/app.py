@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-urll="https://www.acunetix.com/websitesecurity/sql-injection/"
-
 
 
 import bson
@@ -130,7 +128,7 @@ def index():
             error_msg = "You must provide a valid URL!"
             return render_template("/pages/home.html", error=error_msg)
         else:
-            pars, numss, num_img_tags = get_list_of_paragraphs(urll)
+            pars, numss, num_img_tags = get_list_of_paragraphs(url)
             r_par, r_num = par_threshold(pars, numss)
             results = [r_num, num_img_tags]
             # download image function -> will return image path
