@@ -1,7 +1,12 @@
+import certifi
+import requests
+from bs4 import BeautifulSoup
+
 import bson
 from flask import request, Flask, render_template, redirect
 from flask_pymongo import PyMongo
 
+from PIL import Image
 import os
 import requests
 import validators
@@ -13,20 +18,104 @@ from bson.errors import InvalidId
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://mlproject:mlproject@cluster0.5uzjt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-mongodb_client = PyMongo(app)
+app.config["MONGO_URI"] = "mongodb+srv://mlproject:mlproject@cluster0.5uzjt.mongodb.net/MLPROJECT?retryWrites=true&w=majority"
+
+
+mongodb_client = PyMongo(app, tlsCAFile=certifi.where())
 db = mongodb_client.db
 
-'''
-def download_image(soup):
-	UPLOAD_FOLDER = "./images"
-	for image in soup.find_all("img"):
-		source =  image["src"]
-		img = Image.open(requests.get(image_url, stream = True).raw)
-		filename = secure_filename(img.filename)
-		img.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-		return path #bu image pathi goturub db-ya ataq
-'''		
+
+def download_images(soup, url):
+    size = 28, 28
+    dir_name = url.split("//")[1].replace('.', '_').replace("/", "_")
+    cwd = os.getcwd()
+    full_path = os.path.join("./static/images/", dir_name)
+    print("FULL PATH", full_path)
+
+    img_paths = []
+
+    if not os.path.exists(full_path):
+        os.mkdir(full_path)
+
+    c = 1
+    for image in soup.find_all("img"):
+        source = image["src"]
+        if "http" in source:
+            # .convert("RGB")
+            img = Image.open(requests.get(source, stream=True).raw)
+            img.thumbnail(size)
+            ext = str(img.format).lower()
+            filename = f"image_{c}.{ext}"
+            c = c + 1
+            img.save(os.path.join(full_path, filename))
+            img_paths.append(f"{full_path}/{filename}")
+
+    return img_paths
+
+
+def get_list_of_paragraphs(url):
+    res = requests.get(url)
+    res_html = res.content
+
+    tags_soup = BeautifulSoup(res_html, 'html.parser')
+    num_img_tags = len(tags_soup.find_all("img"))
+    url_content = tags_soup.get_text()
+
+    splat = url_content.split("\n")
+
+    paragraphs = []
+    word_counts = []
+    for i in splat:
+        if i not in ('', ' ', '\r', '\n', '\r\n', '\n\r'):
+            paragraphs.append(i)
+            word_counts.append(len(i.split()))
+
+    return paragraphs, word_counts, num_img_tags
+
+
+def par_threshold(pars, numss):
+
+    len_numss = len(numss)
+    # print(numss)
+
+    numss.append(50)
+    pars.append('')
+    new_paragraphs = []
+
+    i = 0
+    while i < len_numss:
+        if numss[i] >= 50:
+            new_paragraphs.append(pars[i])
+            i += 1
+        else:
+            new_num = numss[i]
+            new_p = pars[i]
+
+            while new_num < 50:
+                i += 1
+                new_num += numss[i]
+                new_p = new_p + ' ' + pars[i]
+
+            new_paragraphs.append(new_p)
+            i += 1
+
+    new_word_count = []
+    for i in new_paragraphs:
+        new_word_count.append(len(i.split()))
+
+    # print(new_word_count)
+
+    # print(len(new_word_count))
+    # print(len(new_paragraphs))
+
+    if (new_word_count[-1] < 50):
+        new_word_count[-2] = new_word_count[-2] + new_word_count[-1]
+        new_word_count.pop()
+        new_paragraphs[-2] = new_paragraphs[-2] + ' ' + new_paragraphs[-1]
+        new_paragraphs.pop()
+
+    return new_paragraphs, len(new_word_count)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -34,32 +123,39 @@ def index():
         return render_template("/pages/home.html")
 
     elif(request.method == "POST"):
-        
+
         url = request.form['url']
-		
+
         if not validators.url(url):
             error_msg = "You must provide a valid URL!"
             return render_template("/pages/home.html", error=error_msg)
         else:
+            pars, numss, num_img_tags = get_list_of_paragraphs(url)
+            print(pars)
+            print(numss)
+            r_par, r_num = par_threshold(pars, numss)
 
+            print("###############################")
+            print(r_par)
+            results = [r_num, num_img_tags]
+            # download image function -> will return image path
+            # to fix
             res = requests.get(url)
             res_html = res.content
             tags_soup = BeautifulSoup(res_html, 'html.parser')
-            num_p_tags = len(tags_soup.find_all("p"))
-            num_img_tags = len(tags_soup.find_all("img"))
-            results = [num_p_tags, num_img_tags]
-			
-			
-			# download paragraphs function -> will return paragraphs that will be stored on the db
-			# download image function -> will return image path
-			# 
-			# after getting returns save results to db.
+            image_paths = download_images(tags_soup, url)
+            print('++++++++++++++++')
+
+            # after getting returns save results to db.
+            # if url does not exist in db, write to db
+            if not db.articles.find_one({"url": url}):
+                print('======================')
+                db.articles.insert_one(
+                    {"url": url, "image_paths": image_paths, "paragraphs": r_par})
+                print('---------------------')
 
             return render_template("/pages/home.html", results=results)
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-# url="https://www.bbc.com/travel/article/20220228-italys-rare-surprisingly-bitter-honey"
