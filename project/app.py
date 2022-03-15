@@ -2,6 +2,7 @@ import certifi
 import requests
 from bs4 import BeautifulSoup
 
+
 import bson
 from flask import request, Flask, render_template, redirect
 from flask_pymongo import PyMongo
@@ -134,7 +135,6 @@ def index():
             print(pars)
             print(numss)
             r_par, r_num = par_threshold(pars, numss)
-
             results = [r_num, num_img_tags]
             # download image function -> will return image path
             # to fix
