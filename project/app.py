@@ -135,8 +135,6 @@ def index():
             print(numss)
             r_par, r_num = par_threshold(pars, numss)
 
-            print("###############################")
-            print(r_par)
             results = [r_num, num_img_tags]
             # download image function -> will return image path
             # to fix
