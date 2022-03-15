@@ -75,25 +75,25 @@ def get_list_of_paragraphs(url):
     return paragraphs, word_counts, num_img_tags
 
 
-def par_threshold(pars, numss):
+def par_threshold(pars, numss, threshold):
 
     len_numss = len(numss)
     # print(numss)
 
-    numss.append(50)
+    numss.append(threshold)
     pars.append('')
     new_paragraphs = []
 
     i = 0
     while i < len_numss:
-        if numss[i] >= 50:
+        if numss[i] >= threshold:
             new_paragraphs.append(pars[i])
             i += 1
         else:
             new_num = numss[i]
             new_p = pars[i]
 
-            while new_num < 50:
+            while new_num < threshold:
                 i += 1
                 new_num += numss[i]
                 new_p = new_p + ' ' + pars[i]
@@ -109,7 +109,7 @@ def par_threshold(pars, numss):
     # print(len(new_word_count))
     # print(len(new_paragraphs))
 
-    if (new_word_count[-1] < 50):
+    if (new_word_count[-1] < threshold):
         new_word_count[-2] = new_word_count[-2] + new_word_count[-1]
         new_word_count.pop()
         new_paragraphs[-2] = new_paragraphs[-2] + ' ' + new_paragraphs[-1]
@@ -126,7 +126,7 @@ def index():
     elif(request.method == "POST"):
 
         url = request.form['url']
-        threshold = request.form['threshold']
+        threshold = int(request.form['threshold'])
         img_size = int(request.form['img_size'])
 
         if not validators.url(url):
@@ -136,7 +136,7 @@ def index():
             pars, numss, num_img_tags = get_list_of_paragraphs(url)
             print(pars)
             print(numss)
-            r_par, r_num = par_threshold(pars, numss)
+            r_par, r_num = par_threshold(pars, numss, threshold)
             results = [r_num, num_img_tags]
             # download image function -> will return image path
             # to fix
