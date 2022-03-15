@@ -52,7 +52,7 @@
 
 .wrap-login100 {
   width: 400px;
-  /* width: 30%; */
+  /* width: 30%;  */
   background: #fff;
   margin: 50px;
   border-radius: 10px;
@@ -67,7 +67,7 @@
 
 .wrap-login200 {
   width: 650px;
-  /* width: 30%; 30% */
+  /* width: 30%; */
   background: none;
   margin: 50px;
   border-radius: 10px;
@@ -473,4 +473,11 @@ iframe {
 .hov1:hover {
   color: #4b2354;
   text-decoration: underline;
+}
+
+.numinput {
+  border: 1px solid #846add;
+  margin-left: 10px;
+  text-indent: 20px;
+  width: 150px;
 }

@@ -26,12 +26,13 @@ mongodb_client = PyMongo(app, tlsCAFile=certifi.where())
 db = mongodb_client.db
 
 
-def download_images(soup, url):
-    size = 28, 28
+def download_images(soup, url, img_size):
     dir_name = url.split("//")[1].replace('.', '_').replace("/", "_")
     cwd = os.getcwd()
     full_path = os.path.join("./static/images/", dir_name)
-    print("FULL PATH", full_path)
+    # print("FULL PATH", full_path)
+
+    size = (img_size, img_size)
 
     img_paths = []
 
@@ -105,7 +106,6 @@ def par_threshold(pars, numss):
         new_word_count.append(len(i.split()))
 
     # print(new_word_count)
-
     # print(len(new_word_count))
     # print(len(new_paragraphs))
 
@@ -126,6 +126,8 @@ def index():
     elif(request.method == "POST"):
 
         url = request.form['url']
+        threshold = request.form['threshold']
+        img_size = int(request.form['img_size'])
 
         if not validators.url(url):
             error_msg = "You must provide a valid URL!"
@@ -141,7 +143,7 @@ def index():
             res = requests.get(url)
             res_html = res.content
             tags_soup = BeautifulSoup(res_html, 'html.parser')
-            image_paths = download_images(tags_soup, url)
+            image_paths = download_images(tags_soup, url, img_size)
             print('++++++++++++++++')
 
             # after getting returns save results to db.
