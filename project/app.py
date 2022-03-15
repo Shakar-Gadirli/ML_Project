@@ -106,7 +106,6 @@ def par_threshold(pars, numss):
         new_word_count.append(len(i.split()))
 
     # print(new_word_count)
-
     # print(len(new_word_count))
     # print(len(new_paragraphs))
 
