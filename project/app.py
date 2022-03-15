@@ -1,3 +1,8 @@
+import certifi
+import requests
+from bs4 import BeautifulSoup
+
+
 import bson
 from flask import request, Flask, render_template, redirect
 from flask_pymongo import PyMongo
@@ -15,15 +20,17 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://mlproject:mlproject@cluster0.5uzjt.mongodb.net/MLPROJECT?retryWrites=true&w=majority"
-mongodb_client = PyMongo(app)
+
+
+mongodb_client = PyMongo(app, tlsCAFile=certifi.where())
 db = mongodb_client.db
 
 
-def download_images(soup,url):
-    size = 28, 28    
-    dir_name = url.split("//")[1].replace('.', '_').replace("/","_")
+def download_images(soup, url):
+    size = 28, 28
+    dir_name = url.split("//")[1].replace('.', '_').replace("/", "_")
     cwd = os.getcwd()
-    full_path = os.path.join("./static/images/",dir_name)
+    full_path = os.path.join("./static/images/", dir_name)
     print("FULL PATH", full_path)
 
     img_paths = []
@@ -33,16 +40,17 @@ def download_images(soup,url):
 
     c = 1
     for image in soup.find_all("img"):
-        source =  image["src"]
+        source = image["src"]
         if "http" in source:
-            img = Image.open(requests.get(source, stream = True).raw) #.convert("RGB")
+            # .convert("RGB")
+            img = Image.open(requests.get(source, stream=True).raw)
             img.thumbnail(size)
             ext = str(img.format).lower()
             filename = f"image_{c}.{ext}"
             c = c + 1
             img.save(os.path.join(full_path, filename))
             img_paths.append(f"{full_path}/{filename}")
-    
+
     return img_paths
 
 
@@ -59,17 +67,17 @@ def get_list_of_paragraphs(url):
     paragraphs = []
     word_counts = []
     for i in splat:
-        if i not in ('',' ','\r','\n','\r\n','\n\r'):
+        if i not in ('', ' ', '\r', '\n', '\r\n', '\n\r'):
             paragraphs.append(i)
             word_counts.append(len(i.split()))
 
     return paragraphs, word_counts, num_img_tags
 
 
-def par_threshold(pars,numss):
+def par_threshold(pars, numss):
 
     len_numss = len(numss)
-    #print(numss)
+    # print(numss)
 
     numss.append(50)
     pars.append('')
@@ -80,7 +88,7 @@ def par_threshold(pars,numss):
         if numss[i] >= 50:
             new_paragraphs.append(pars[i])
             i += 1
-        else:        
+        else:
             new_num = numss[i]
             new_p = pars[i]
 
@@ -90,7 +98,7 @@ def par_threshold(pars,numss):
                 new_p = new_p + ' ' + pars[i]
 
             new_paragraphs.append(new_p)
-            i+=1
+            i += 1
 
     new_word_count = []
     for i in new_paragraphs:
@@ -107,8 +115,7 @@ def par_threshold(pars,numss):
         new_paragraphs[-2] = new_paragraphs[-2] + ' ' + new_paragraphs[-1]
         new_paragraphs.pop()
 
-    return new_paragraphs,len(new_word_count)
-
+    return new_paragraphs, len(new_word_count)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -117,14 +124,16 @@ def index():
         return render_template("/pages/home.html")
 
     elif(request.method == "POST"):
-        
+
         url = request.form['url']
-		
+
         if not validators.url(url):
             error_msg = "You must provide a valid URL!"
             return render_template("/pages/home.html", error=error_msg)
         else:
             pars, numss, num_img_tags = get_list_of_paragraphs(url)
+            print(pars)
+            print(numss)
             r_par, r_num = par_threshold(pars, numss)
             results = [r_num, num_img_tags]
             # download image function -> will return image path
@@ -133,26 +142,18 @@ def index():
             res_html = res.content
             tags_soup = BeautifulSoup(res_html, 'html.parser')
             image_paths = download_images(tags_soup, url)
+            print('++++++++++++++++')
 
             # after getting returns save results to db.
             # if url does not exist in db, write to db
             if not db.articles.find_one({"url": url}):
-                db.articles.insert_one({"url":url,"image_paths":image_paths,"paragraphs":r_par})
-
+                print('======================')
+                db.articles.insert_one(
+                    {"url": url, "image_paths": image_paths, "paragraphs": r_par})
+                print('---------------------')
 
             return render_template("/pages/home.html", results=results)
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
- 
-    
