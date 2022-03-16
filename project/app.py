@@ -72,13 +72,15 @@ def get_list_of_paragraphs(url):
     for i in splat:
         if i not in ('', ' ', '\r', '\n', '\r\n', '\n\r'):
             paragraphs.append(i)
-            one_sanitized_p = i.translate(str.maketrans('', '', string.punctuation))
-            all_splitted_paragraphs.append([e for e in one_sanitized_p.split()])
+            one_sanitized_p = i.translate(
+                str.maketrans('', '', string.punctuation))
+            all_splitted_paragraphs.append(
+                [e for e in one_sanitized_p.split()])
             word_counts.append(len(i.split()))
 
-    #print("~"*50)
-    #print(all_splitted_paragraphs)
-    #print("~"*50)
+    # print("~"*50)
+    # print(all_splitted_paragraphs)
+    # print("~"*50)
     return all_splitted_paragraphs, paragraphs, word_counts, num_img_tags
 
 
@@ -140,7 +142,8 @@ def index():
             error_msg = "You must provide a valid URL!"
             return render_template("/pages/home.html", error=error_msg)
         else:
-            splitted_pars, pars, numss, num_img_tags = get_list_of_paragraphs(url)
+            splitted_pars, pars, numss, num_img_tags = get_list_of_paragraphs(
+                url)
             print(splitted_pars)
             r_par, r_num = par_threshold(pars, numss, threshold)
             results = [r_num, num_img_tags]
@@ -157,7 +160,7 @@ def index():
             if not db.articles.find_one({"url": url}):
                 print('======================')
                 db.articles.insert_one(
-                    {"url": url, "image_paths": image_paths, "paragraphs": r_par})
+                    {"url": url, "image_paths": image_paths, "paragraphs": splitted_pars})
                 print('---------------------')
 
             return render_template("/pages/home.html", results=results)
