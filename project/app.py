@@ -1,6 +1,7 @@
 import certifi
 import requests
 from bs4 import BeautifulSoup
+import string
 
 
 import bson
@@ -66,13 +67,19 @@ def get_list_of_paragraphs(url):
     splat = url_content.split("\n")
 
     paragraphs = []
+    all_splitted_paragraphs = []
     word_counts = []
     for i in splat:
         if i not in ('', ' ', '\r', '\n', '\r\n', '\n\r'):
             paragraphs.append(i)
+            one_sanitized_p = i.translate(str.maketrans('', '', string.punctuation))
+            all_splitted_paragraphs.append([e for e in one_sanitized_p.split()])
             word_counts.append(len(i.split()))
 
-    return paragraphs, word_counts, num_img_tags
+    #print("~"*50)
+    #print(all_splitted_paragraphs)
+    #print("~"*50)
+    return all_splitted_paragraphs, paragraphs, word_counts, num_img_tags
 
 
 def par_threshold(pars, numss, threshold):
@@ -133,9 +140,8 @@ def index():
             error_msg = "You must provide a valid URL!"
             return render_template("/pages/home.html", error=error_msg)
         else:
-            pars, numss, num_img_tags = get_list_of_paragraphs(url)
-            print(pars)
-            print(numss)
+            splitted_pars, pars, numss, num_img_tags = get_list_of_paragraphs(url)
+            print(splitted_pars)
             r_par, r_num = par_threshold(pars, numss, threshold)
             results = [r_num, num_img_tags]
             # download image function -> will return image path
