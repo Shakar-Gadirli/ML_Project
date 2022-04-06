@@ -1,0 +1,91 @@
+{% extends 'base.html'%} {% block title %} Home {% endblock %} {% block content %}
+
+    <link rel="stylesheet" type="text/css" href="static/css/util.css" >
+	<link rel="stylesheet" type="text/css" href="static/css/design.css">
+    <!-- <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico"/> -->
+    <link rel="icon" type="image/png" href = "">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+
+    <!-- <div class="container mt-5 mb-5 px-10 ">
+        <div class="row">
+
+            <div class="col-md-6 offset-md-3 mb-2 "> -->
+                <!-- <div class="card"> -->
+                <div class="container-login100" style="background-image: url('../../images/ml.jpg');">
+                    <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+                            <h2 class="title">Machine learning project! <i class="fas fa-robot"></i></h2>
+                            <form method="POST" action="/" class="login100-form validate-form">
+                                <h6> Paragraph and image count</h6>
+                                <div class="wrap-input100 validate-input">
+                                    <input type="search" placeholder="URL" name="url" class="input100"/>
+                                    <span class="focus-input100"></span>
+                                    <span class="symbol-input100">
+                                        <i class="fas fa-link"></i>
+                                    </span>
+                                </div>
+
+                                <br>
+
+                                <div style="text-align: center;">
+                                <div>
+                                    <h7>Threshold:   </h7>
+                                    <input class="numinput" type="number" placeholder="Enter a number" name="threshold"/>
+                                </div>
+
+                                <br><br>
+
+                                <div>
+                                    <h7>Image size:   </h7>
+                                    <input class="numinput" type="number" placeholder= "Enter a number" name="img_size"/>
+                                </div>
+                                </div>
+
+                                <br><br>
+
+                                <div class="container-login100-form-btn">
+                                    <button type="submit" class="login100-form-btn">SEARCH</button>
+                                </div>
+
+                                <hr>
+                                
+                            </form>
+                            
+                    </div>
+
+                    <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+                        <form method="post" action="/" class="login100-form validate-form">
+                        <h3>Image classification</h3>
+                        <div class="wrap-input100 validate-input">
+                        <label for="image">Upload an image:</label>
+                        <input type="file" name="image" accept="image/*">
+                        <br><br>
+                        <input type="submit" name="submit" value="Upload" class="login100-form-btn">
+                        <hr>
+                        <h5>The class of the image: </h5><h5></h5>
+                        </div>
+                    </form>
+                    </div>
+
+
+                    <!-- <div class="col-lg-4 ml-auto"> -->
+                    <div class="wrap-login200 p-l-55 p-r-55 p-t-80 p-b-30">
+                    <h2 class="result"><b>Results</b></h2>
+                    {% if (error is defined) %}
+                       <h3> <i class="fas fa-exclamation-triangle"></i> {{ error }} </h3>
+                    {% endif %}
+
+                    {% if (results is defined) %}
+                       <h3><i class="fas fa-paragraph"></i>  Number of paragraphs: {{ results[0] }} </h3>
+					   <h3><i class="fas fa-image"></i>  Number of images: {{ results[1] }} </h3>
+                    {% endif %}
+                    </div>
+                    
+                </div>
+            <!-- </div>
+        </div>     
+    </div> -->
+{% endblock %}
