@@ -1,0 +1,44 @@
+{% extends 'base.html'%} {% block title %} Home {% endblock %} {% block content %}
+
+    <link rel="stylesheet" type="text/css" href="static/css/util.css" >
+	<link rel="stylesheet" type="text/css" href="static/css/design.css">
+    <!-- <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico"/> -->
+    <link rel="icon" type="image/png" href = "">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+
+    <!-- <div class="container mt-5 mb-5 px-10 ">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 mb-2 "> -->
+                <!-- <div class="card"> -->
+                {% if (results is defined) %}
+
+                <div class="container-login100" style="background-image: url('../../images/ml.jpg');">
+                    <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+                            <h2 class="title"> Classified image</h2>
+                            <img src={{ results[0] }} style="padding: 10; margin: 20;">
+                    </div>
+                {% endif %}
+            
+
+                    <!-- <div class="col-lg-4 ml-auto"> -->
+                    <div class="wrap-login200 p-l-55 p-r-55 p-t-80 p-b-30">
+                    <!-- <h2 class="result"><b>Results</b></h2> -->
+                    {% if (error is defined) %}
+                       <h3> <i class="fas fa-exclamation-triangle"></i> {{ error }} </h3>
+                    {% endif %}
+
+                    {% if (results is defined) %}
+                       <h3><i class="fas fa-paragraph"></i>  Image classified as: {{ results[1] }} </h3>
+                    {% endif %}
+                   
+                    </div>
+                    
+                </div>
+            <!-- </div>
+        </div>     
+    </div> -->
+{% endblock %}

@@ -137,6 +137,10 @@ def index():
         url = request.form['url']
         threshold = int(request.form['threshold'])
         img_size = int(request.form['img_size'])
+        image = request.files.get('image', '')
+        image = request.form["image"]
+        print(image)
+
 
         if not validators.url(url):
             error_msg = "You must provide a valid URL!"
@@ -164,6 +168,25 @@ def index():
                 print('---------------------')
 
             return render_template("/pages/home.html", results=results)
+
+
+@app.route('/classify', methods=['GET', 'POST'])
+def classify():
+    if(request.method == "POST"):
+        results = []
+        image = request.files['image']
+        full_name = f"../static/images/{image.filename}"
+        results.append(full_name)
+        name = image.filename.split("_")[0]
+        animals = ['cat','dog','chicken','horse','goose','cow','camel','elephant','lion','giraffe','zebra']
+        object = ['mountain','car','house','pen','tree']
+
+        if  name in animals:
+            results.append('animal')
+        else:
+            results.append('object')
+      
+    return render_template("/pages/classes.html", results=results)
 
 
 if __name__ == "__main__":

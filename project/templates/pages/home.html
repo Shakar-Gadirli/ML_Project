@@ -12,13 +12,13 @@
 
     <!-- <div class="container mt-5 mb-5 px-10 ">
         <div class="row">
-
             <div class="col-md-6 offset-md-3 mb-2 "> -->
                 <!-- <div class="card"> -->
                 <div class="container-login100" style="background-image: url('../../images/ml.jpg');">
                     <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
                             <h2 class="title">Machine learning project! <i class="fas fa-robot"></i></h2>
                             <form method="POST" action="/" class="login100-form validate-form">
+                                <h6> Paragraph and image count</h6>
                                 <div class="wrap-input100 validate-input">
                                     <input type="search" placeholder="URL" name="url" class="input100"/>
                                     <span class="focus-input100"></span>
@@ -48,9 +48,27 @@
                                 <div class="container-login100-form-btn">
                                     <button type="submit" class="login100-form-btn">SEARCH</button>
                                 </div>
+
+                                <hr>
                                 
                             </form>
+                            
                     </div>
+
+                    <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+                        <form method="post" action="/classify" class="login100-form validate-form" enctype="multipart/form-data">
+                        <h3>Image classification</h3>
+                        <div class="wrap-input100 validate-input">
+                        <label for="image">Upload an image:</label>
+                        <input type="file" name="image" accept="image/*">
+                        <br><br>
+                        <input type="submit" name="submit" value="Upload" class="login100-form-btn">
+                        <hr>
+                        <h5>The class of the image: </h5><h5></h5>
+                        </div>
+                    </form>
+                    </div>
+
 
                     <!-- <div class="col-lg-4 ml-auto"> -->
                     <div class="wrap-login200 p-l-55 p-r-55 p-t-80 p-b-30">
@@ -67,7 +85,6 @@
                     
                 </div>
             <!-- </div>
-                
         </div>     
     </div> -->
 {% endblock %}
