@@ -148,7 +148,7 @@ def index():
             return render_template("/pages/home.html", error=error_msg)
             
         else:
-            '''
+            # SCRAPER
             splitted_pars, pars, numss, num_img_tags = get_list_of_paragraphs(
                 url)
             print(splitted_pars)
@@ -171,7 +171,7 @@ def index():
                 print('---------------------')
             
             return render_template("/pages/home.html", results=results)
-            '''
+            
             sport = ['https://www.bbc.com/sport/golf/60995999','https://www.bbc.com/sport/live/football/61020215']
             adventure = ['https://www.bbc.com/travel/article/20220329-icelands-unsung-herring-girls','https://www.bbc.com/travel/article/20180603-the-unexpected-philosophy-icelanders-live-by']
             food = ['https://www.bbc.com/travel/article/20220228-italys-rare-surprisingly-bitter-honey', 'https://www.bbc.com/travel/article/20180625-lorighittas-an-all-but-lost-sardinian-dish']
