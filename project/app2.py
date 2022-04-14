@@ -172,43 +172,62 @@ def index():
             
             return render_template("/pages/home.html", results=results)
             
-            sport = ['https://www.bbc.com/sport/golf/60995999','https://www.bbc.com/sport/live/football/61020215']
-            adventure = ['https://www.bbc.com/travel/article/20220329-icelands-unsung-herring-girls','https://www.bbc.com/travel/article/20180603-the-unexpected-philosophy-icelanders-live-by']
-            food = ['https://www.bbc.com/travel/article/20220228-italys-rare-surprisingly-bitter-honey', 'https://www.bbc.com/travel/article/20180625-lorighittas-an-all-but-lost-sardinian-dish']
-            music=['https://www.bbc.com/culture/article/20211203-why-donna-summer-was-one-of-the-original-rock-stars', 'https://www.bbc.com/culture/article/20210528-the-discovery-of-mythical-lost-tapes']
-            if url in sport:
-                results='Sport'
-            elif url in adventure:
-                results='Adventure'
-            elif url in food:
-                results='food'
-            elif url in music:
-                results='music'
-            else:
-                results='could not identify'
-            
-            print(results)
-            time.sleep(15)
-            return render_template("/pages/home.html", results=results)
 
-@app.route('/classify', methods=['GET', 'POST'])
-def classify():
-    if(request.method == "POST"):
-        results = []
-        image = request.files['image']
-        full_name = f"../static/images/{image.filename}"
-        results.append(full_name)
-        name = image.filename.split("_")[0]
-        animals = ['cat','dog','chicken','horse','goose','cow','camel','elephant','lion','giraffe','zebra']
-        object = ['mountain','car','house','pen','tree']
 
-        if  name in animals:
-            results.append('animal')
-        else:
-            results.append('object')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @app.route('/classify', methods=['GET', 'POST'])
+# def classify():
+#     if(request.method == "POST"):
+#         results = []
+#         image = request.files['image']
+#         full_name = f"../static/images/{image.filename}"
+#         results.append(full_name)
+#         name = image.filename.split("_")[0]
+#         animals = ['cat','dog','chicken','horse','goose','cow','camel','elephant','lion','giraffe','zebra']
+#         object = ['mountain','car','house','pen','tree']
+
+#         if  name in animals:
+#             results.append('animal')
+#         else:
+#             results.append('object')
       
-    time.sleep(15)
-    return render_template("/pages/classes.html", results=results)
+#     time.sleep(15)
+#     return render_template("/pages/classes.html", results=results)
 
 
 if __name__ == "__main__":

@@ -55,7 +55,7 @@
                             
                     </div>
 
-                    <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+                    <!-- <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
                         <form method="post" action="/classify" class="login100-form validate-form" enctype="multipart/form-data">
                         <h3>Image classification</h3>
                         <div class="wrap-input100 validate-input">
@@ -67,7 +67,7 @@
                         <h5>The class of the image: </h5><h5></h5>
                         </div>
                     </form>
-                    </div>
+                    </div> -->
 
 
                     <!-- <div class="col-lg-4 ml-auto"> -->
@@ -78,7 +78,42 @@
                     {% endif %}
 
                     {% if (results is defined) %}
-                       <h3><i class="fas fa-paragraph"></i>  Text classified as {{ results }} </h3>
+                        {% if (results|length == 8) %}
+                            <h3><i class="fas fa-paragraph"></i>  Number of paragraphs  {{ results[0] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  Number of  images  {{ results[1] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  Text classified as {{ results[2] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  {{ results[3] }} picture classified as object </h3>
+
+                            
+                            <h3><i class="fas fa-paragraph"></i>  std {{ results[4] }}  </h3>
+                            <h3><i class="fas fa-paragraph"></i>  median {{ results[5] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  mean {{ results[6] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  variance {{ results[7] }} </h3>
+                            <img src="/home/kali/New Semester/ML/Project/project/static/images/barchart2.png" width="50" height="50">
+                        {% endif %}
+
+                        {% if (results|length > 8) %}
+                            <h3><i class="fas fa-paragraph"></i>  Number of paragraphs  {{ results[0] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  Number of  images  {{ results[1] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  Text classified as {{ results[2] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  {{ results[4] }} picture classified as {{ results[3] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  {{ results[5] }} picture classified as object </h3>
+
+                            <h3><i class="fas fa-paragraph"></i>  std {{ results[6] }}  </h3>
+                            <h3><i class="fas fa-paragraph"></i>  median {{ results[7] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  mean {{ results[8] }} </h3>
+                            <h3><i class="fas fa-paragraph"></i>  variance {{ results[9] }} </h3>
+
+                            <img src="/home/kali/New Semester/ML/Project/project/static/images/barchart2.png" width="250" height="250"/>
+
+
+
+
+                        {% endif %}
+
+
+
+                       <!-- <h3><i class="fas fa-paragraph"></i>  Text classified as {{ results }} </h3> -->
 					   <!-- <h3><i class="fas fa-image"></i>  Number of images: {{ results[1] }} </h3> -->
                     {% endif %}
                     </div>
